@@ -1,0 +1,82 @@
+import random
+import sys
+
+class CryptoCoinFlipGame:
+    def __init__(self, initial_balance=100.0, currency="ETH"):
+        self.balance = initial_balance
+        self.currency = currency
+        self.rounds_played = 0
+
+    def show_balance(self):
+        print(f"\nBalance: {self.balance:.4f} {self.currency}")
+
+    def flip_coin(self):
+        return random.choice(['heads', 'tails'])
+
+    def place_bet(self, amount, choice):
+        if amount <= 0:
+            return None, "Bet amount must be greater than zero."
+        if amount > self.balance:
+            return None, "Insufficient balance."
+        if choice not in ['heads', 'tails']:
+            return None, "Invalid choice. Use 'heads' or 'tails'."
+
+        result = self.flip_coin()
+        win = (choice == result)
+
+        if win:
+            profit = amount
+            self.balance += profit
+            message = f"You won! Coin shows {result}. You gained {profit:.4f} {self.currency}."
+        else:
+            profit = -amount
+            self.balance += profit
+            message = f"You lost! Coin shows {result}. You lost {amount:.4f} {self.currency}."
+
+        self.rounds_played += 1
+        return result, message, profit
+
+    def play_round(self):
+        print("\n" + "="*50)
+        print("New round - Coin Flip")
+        self.show_balance()
+
+        try:
+            amount = float(input(f"Bet amount (max {self.balance:.4f} {self.currency}): "))
+        except ValueError:
+            print("Invalid number.")
+            return
+
+        choice = input("Choose heads or tails: ").strip().lower()
+
+        result, msg, profit = self.place_bet(amount, choice)
+
+        if result is None:
+            print(f"Error: {msg}")
+            return
+
+        print(f"\n{msg}")
+        self.show_balance()
+        print(f"Rounds played: {self.rounds_played}")
+
+    def start(self):
+        print("Welcome to Crypto Coin Flip Game!")
+        print(f"Initial balance: {self.balance:.4f} {self.currency}")
+        print("Bet on heads or tails. If correct, you double your bet.")
+        print("Type 'exit' to quit.\n")
+
+        while True:
+            self.play_round()
+            if self.balance <= 0:
+                print("\nBalance is zero. Game over!")
+                break
+
+            cont = input("\nContinue? (y/n): ").strip().lower()
+            if cont != 'y':
+                print("\nThanks for playing! Final balance:")
+                self.show_balance()
+                break
+
+if __name__ == "__main__":
+    game = CryptoCoinFlipGame(initial_balance=100.0, currency="ETH")
+    game.start()
