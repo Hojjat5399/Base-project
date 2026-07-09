@@ -77,6 +77,25 @@ class CryptoCoinFlipGame:
                 self.show_balance()
                 break
 
+
+# --- NEW ADDITION: Simulation function ---
+def run_simulation(num_games=5):
+    """Runs a number of random games automatically and shows summary stats."""
+    print("\n--- Running a quick simulation of {} random games ---".format(num_games))
+    sim_game = CryptoCoinFlipGame(initial_balance=100.0, currency="ETH")
+    wins = 0
+    for i in range(num_games):
+        amount = random.uniform(5, 20)          # random bet between 5 and 20
+        choice = random.choice(['heads', 'tails'])
+        result, msg, profit = sim_game.place_bet(amount, choice)
+        if profit > 0:
+            wins += 1
+        print(f"Game {i+1}: {msg}")
+    print(f"\nSimulation result: {wins} wins out of {num_games}, "
+          f"final balance: {sim_game.balance:.4f} {sim_game.currency}")
+
+
 if __name__ == "__main__":
     game = CryptoCoinFlipGame(initial_balance=100.0, currency="ETH")
-    game.start()
+    game.start()                # play the main interactive game
+    run_simulation()            # automatically run a demo after the game ends
